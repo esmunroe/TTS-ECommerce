@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,7 +22,19 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User {
+// This is the user class that allows the user to be created.
+public class User implements UserDetails {
+    @Transient
+    private boolean accountNonExpired = true;
+    @Transient
+    private boolean accountNonLocked = true;
+    @Transient
+    private boolean credentialsNonExpired = true;
+    @Transient
+    private boolean enabled = true;
+    @Transient
+    private Collection<GrantedAuthority> authorities = null;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
@@ -30,20 +44,16 @@ public class User {
     @NotEmpty(message = "Please provide an email")
     private String email;
 
-    @Length(min = 3, message = "Your username must have at least 3 characters")
+    @Length(min = 3, message = "your username must have more then 3 letters")
     @Length(max = 15, message = "Your username cannot have more than 15 characters")
-    @Pattern(regexp="[^\\s]+", message="Your username cannot contain spaces")
+    @Pattern(regexp = "[^\\s]+", message = "Your username cannot contain spaces")
     private String username;
-
-    @Length(min = 5, message = "Your password must have at least 5 characters")
+    @Length(min = 5, message = "Your password needs to be more than 5 characters")
     private String password;
-
-    @NotEmpty(message = "Please provide your first name")
+    @Length(message = "Cant leave empty")
     private String firstName;
-
-    @NotEmpty(message = "Please provide your last name")
+    @Length(message = "Cant leave empty")
     private String lastName;
-
     private int active;
 
     @CreationTimestamp
@@ -52,11 +62,4 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_follower", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
-    private List<User> followers;
-
-    @ManyToMany(mappedBy = "followers")
-    private List<User> following;
 }
