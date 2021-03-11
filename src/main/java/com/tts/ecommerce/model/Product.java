@@ -17,13 +17,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "product_id")
     private Long id;
-    private Integer quantity;
+    private int quantity;
     private float price;
-
+    private String description;
+    private String name;
     private String brand;
     private String category;
-    private String description;
-    private String size;
-    private String name;
     private String image;
 }

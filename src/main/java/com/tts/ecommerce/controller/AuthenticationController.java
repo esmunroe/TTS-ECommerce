@@ -14,32 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
-public class AuthenticationController {
+class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "/signin")
-    public String login(){
+    @GetMapping("/signin")
+    public String login() {
         return "signin";
     }
+
     @PostMapping("/signin")
-    public String signup(@Valid User user,
-                         @RequestParam String submit,
-                         BindingResult bindingResult,
-                         HttpServletRequest request) throws ServletException {
+    public String singup(@Valid User user, @RequestParam String submit, BindingResult bindingResult, HttpServletRequest request) throws ServletException {
         String password = user.getPassword();
-        if(submit.equals("up")){
-            if(userService.findByUsername(user.getUsername()) == null){
+        if (submit.equals("up")) {
+            if (userService.findByUsername(user.getUsername()) == null) {
                 userService.saveNew(user);
             } else {
-                bindingResult.rejectValue("username",
-                        "error.user",
-                        "Username is already taken.");
+                bindingResult.rejectValue("username", "error.user", "Username is already taken.");
                 return "signin";
             }
         }
         request.login(user.getUsername(), password);
         return "redirect:/";
-
     }
 }
+

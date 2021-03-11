@@ -18,38 +18,37 @@ public class MainController {
     @Autowired
     ProductService productService;
 
-    @GetMapping(value = "/")
-    public String main(){
+    @GetMapping("/")
+    public String main() {
         return "main";
     }
 
-    @ModelAttribute(value = "products")
-    public List<Product> products(){
+    @ModelAttribute("products")
+    public List<Product> products() {
         return productService.findAll();
     }
 
-    @ModelAttribute(value ="categories")
-    public List<String> categories(){
+    @ModelAttribute("categories")
+    public List<String> categories() {
         return productService.findDistinctCategories();
     }
 
-    @ModelAttribute(value = "brands")
-    public List<String> brands(){
+    @ModelAttribute("brands")
+    public List<String> brands() {
         return productService.findDistinctBrands();
     }
 
-    @GetMapping(value = "/filter")
+    @GetMapping("/filter")
     public String filter(@RequestParam(required = false) String category,
-                         @RequestParam(required = false) String brand, Model model){
+                         @RequestParam(required = false) String brand,
+                         Model model) {
         List<Product> filtered = productService.findByBrandAndCategory(brand, category);
         model.addAttribute("products", filtered);
-
         return "main";
     }
 
-    @GetMapping(value = "/about")
-    public String about(){
+    @GetMapping("/about")
+    public String about() {
         return "about";
     }
-
 }
